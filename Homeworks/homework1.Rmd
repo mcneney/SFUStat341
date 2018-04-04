@@ -3,6 +3,8 @@ title: "Stat 341, Homework 1"
 author: "Name1 and Name2 and Name3"
 date: '2018-01-15'
 output: html_document
+Submitted: Chun Wai, karl, Ng Trevor Tong
+Student ID: 301139833 301216523
 ---
 
 ```{r setup, include=FALSE}
@@ -27,6 +29,7 @@ from Canada and the United States and saves them as a new
 dataset called `CanUS1`. 
 
 _Answer_
+`CanUS1 = subset(gapminder , gapminder$country == c("Canada" , "United States"))`
 
 2. (3 marks)
 Repeat the subsetting in (1) with the `filter()` function
@@ -37,6 +40,17 @@ a `for` loop over columns.
 What difference does `all.equal(CanUS1,CanUS2)` report?
 
 _Answer_
+```
+CanUS2 = filter(gapminder , gapminder$country == c("Canada" , "United States"))
+
+result1 = all.equal(CanUS1 , CanUS2)
+
+m = dim(gapminder)[2]
+for (i in 1:m){
+  print(CanUS1[i] == CanUS2[i])
+}
+```
+so they are the same
 
 3. (2 marks)
 Extract the columns `year`, `lifeExp`, `pop` and 
@@ -45,6 +59,10 @@ dataset and save as `gm2` (1 mark).
 Also coerce `gm2` to a matrix and save as `gm3` (1 mark).
 
 _Answer_
+```
+gm2 = gapminder[3:6]
+gm3 = matrix(c(gm2$year , gm2$lifeExp , gm2$pop , gm2$gdpPercap) , ncol = 4)
+```
 
 4. (2 marks)
 Create a larger dataset by stacking `gm2`
@@ -67,7 +85,17 @@ system.time({
 Use the first element of the output (`user` time) as 
 your measure of execution time.
 
+```
 _Answer_
+biggm2 = ""
+system.time({
+  for (i in 1:100){
+    biggm2 = rbind(biggm2, gm2)
+  }
+  
+})
+```
+
 
 5. (2 marks)
 Repeat (4) to create `biggm3` by stacking `gm3` 100 times,
@@ -75,6 +103,18 @@ and compare the timings for constructing `biggm2` versus
 `biggm3`.
 
 _Answer_
+```
+biggm3 = ""
+t2 = system.time({
+  for (i in 1:100){
+    biggm3 = rbind(biggm3, gm3)
+  }
+  
+})
+td = abs(t1[1]-t2[1]) 
+```
+Time difference = 4.412 sec - 1.616 sec
+
 
 6. (3 marks) 
 Now build `biggm3` by (i) initializing an empty
@@ -93,6 +133,14 @@ range(inds)
 ```
 
 _Answer_
+```
+biggm3 = matrix(c("") , ncol = dim(gapminder)[2]*100 , nrow = dim(gapminder)[1]*100)
+t3 = system.time({
+  for (i in 1:100){
+    biggm3 = rbind(biggm3, gm3)
+  }
+```
+The time needed is 3.5sec.
 
 7. (3 marks)
 Write a function called `stackmat` that implements the faster
@@ -110,3 +158,33 @@ Test that your function can replicate the `biggm3` matrix
 you created earlier.
   
 _Answer_
+```
+stackmat <- function(mat, nstack){
+  if (class(mat) != matrix ){
+    stop("argumentmatmust be a matrix")
+  }
+  intial = ""
+  t1 = = system.time({
+    for (i in 1:100){
+      intial = rbind(intial, mat)
+    }
+  nullmat = matrix(c("") , ncol = dim(mat)[2]*nstack , nrow = dim(mat)[1]*nstack)
+  t2 = system.time({
+    for (i in 1:100){
+      nullmat = rbind(nullmat, mat)
+    }
+    max = ""
+  if (t1 > t2) {
+    max = "5"
+  }
+  if (t2 > t1) {
+    max = "6"
+    }
+  
+    
+  })
+    
+  })
+  return(max)
+}
+```
